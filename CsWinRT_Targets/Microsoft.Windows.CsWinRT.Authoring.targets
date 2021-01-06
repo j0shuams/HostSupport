@@ -1,7 +1,11 @@
 <Project ToolsVersion="15.0" xmln="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="CsWinRTCopyHostAssets" BeforeTargets="PrepareForRun">
 
-        <Copy SourceFiles="lib\WinRT.Host.dll"
+      <!-- currently: WinRT.Host.dll is not included in the @(Reference) ... -->
+      <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
+
+<!--
+        <Copy SourceFiles="lib\$(Platform)\WinRT.Host.dll"
               DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
 
         <Copy SourceFiles="lib\WinRT.Host.Shim.dll"
@@ -15,6 +19,6 @@
             
         <Copy SourceFiles="lib\net5.0-windows$(CsWinRTWindowsMetadata)\*"
               DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-
+-->
     </Target>
 </Project>

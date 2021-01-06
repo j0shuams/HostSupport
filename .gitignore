@@ -4,5 +4,8 @@ Coords/.vs/*
 Coords/Coords/Generated Files/*
 App/App/Debug/*
 App/Debug
+App/packages
 App/.vs/*
+App/x64
+App/App/x64
 *msbuild.binlog
