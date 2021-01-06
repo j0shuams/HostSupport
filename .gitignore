@@ -2,4 +2,6 @@ Coords/Coords/bin/*
 Coords/Coords/obj/*
 Coords/.vs/*
 Coords/Coords/Generated Files/*
-
+App/App/Debug/*
+App/Debug
+App/.vs/*
