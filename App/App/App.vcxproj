@@ -111,9 +111,19 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
+    <None Include="WinRT.Host.runtimeconfig.json" />
     <Text Include="readme.txt">
       <DeploymentContent>false</DeploymentContent>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Coords">
+      <HintPath>..\..\Coords\Coords\Generated Files\Coords.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="App.exe.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
