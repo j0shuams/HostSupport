@@ -5,3 +5,4 @@ Coords/Coords/Generated Files/*
 App/App/Debug/*
 App/Debug
 App/.vs/*
+*msbuild.binlog
