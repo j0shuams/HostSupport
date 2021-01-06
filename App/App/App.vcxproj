@@ -111,19 +111,26 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
-    <None Include="WinRT.Host.runtimeconfig.json" />
+    <!-- CsWinRT Authoring Support: runtimeconfig.json -->
+    <None Include="WinRT.Host.runtimeconfig.json">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <Text Include="readme.txt">
       <DeploymentContent>false</DeploymentContent>
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <!-- CsWinRT Authoring Support: C# library's winmd -->
     <Reference Include="Coords">
       <HintPath>..\..\Coords\Coords\Generated Files\Coords.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="App.exe.manifest" />
+    <!-- CsWinRT Authoring Support: C++ app's manifest -->
+    <Manifest Include="App.exe.manifest">
+      <DeploymentContent>true</DeploymentContent>
+    </Manifest>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
