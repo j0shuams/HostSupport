@@ -1,24 +1,15 @@
 <Project ToolsVersion="15.0" xmln="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="CsWinRTCopyHostAssets" BeforeTargets="PrepareForRun">
 
-      <!-- currently: WinRT.Host.dll is not included in the @(Reference) ... -->
-      <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
+<!-- not totally correct for a couple reasons, one being the package version is hard-coded,
+     the other is that we would copy both WinRT.Host.dll instead of just the arch-specific one -->
+    <ItemGroup>
+      <CsWinRTDlls Include="..\packages\Coords.2.1.5\**\*.dll"/>
+    </ItemGroup>
 
-<!--
-        <Copy SourceFiles="lib\$(Platform)\WinRT.Host.dll"
-              DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-
-        <Copy SourceFiles="lib\WinRT.Host.Shim.dll"
-              DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-              
-        <Copy SourceFiles="lib\WinRT.Runtime.dll" 
-              DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-
-        <Copy SourceFiles="lib\Microsoft.Windows.SDK.NET.dll"
-              DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-            
-        <Copy SourceFiles="lib\net5.0-windows$(CsWinRTWindowsMetadata)\*"
-              DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
--->
+    <Target Name="CsWinRTCopyHostAssets" BeforeTargets="ResolveAssemblyReferences" Outputs="@(Reference)">
+      <Copy SourceFiles="@(CsWinRTDlls)" DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
+    </Target>
+    
     </Target>
 </Project>
