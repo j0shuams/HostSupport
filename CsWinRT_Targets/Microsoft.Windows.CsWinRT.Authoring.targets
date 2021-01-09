@@ -1,15 +1,15 @@
 <Project ToolsVersion="15.0" xmln="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="CsWinRTCopyHostAssets" BeforeTargets="PrepareForRun">
 
-<!-- not totally correct for a couple reasons, one being the package version is hard-coded,
-     the other is that we would copy both WinRT.Host.dll instead of just the arch-specific one -->
+  <Target Name="CsWinRTCopyAuthoringDlls" AfterTargets="ResolveAssemblyReference" Outputs="@(Reference)">
     <ItemGroup>
-      <CsWinRTDlls Include="..\packages\Coords.2.1.5\**\*.dll"/>
+    <!-- WinRT.Runtime.dll -->
+    <Reference Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Runtime.dll" />
+    <!-- WinRT.Host.Shim.dll -->
+    <Reference Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Host.Shim.dll" />
+    <!-- Microsoft.Windows.SDK.NET.dll -->
+    <Reference Include="$(MSBuildThisFileDirectory)..\lib\Microsoft.Windows.SDK.NET.dll" />
+    <!-- WinRT.Host.dll - arch specific! -->
+    <Reference Include="$(MSBuildThisFileDirectory)..\native\$(Platform)\WinRT.Host.dll" />
     </ItemGroup>
-
-    <Target Name="CsWinRTCopyHostAssets" BeforeTargets="ResolveAssemblyReferences" Outputs="@(Reference)">
-      <Copy SourceFiles="@(CsWinRTDlls)" DestinationFolder="$(OutDir)" UseHardlinksIfPossible="false" SkipUnchangedFiles="true" />
-    </Target>
-    
-    </Target>
+  </Target>
 </Project>

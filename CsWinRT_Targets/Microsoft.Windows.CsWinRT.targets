@@ -16,6 +16,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <AllowUnsafeBlocks Condition="'$(CsWinRTComponent)' == 'true'">true</AllowUnsafeBlocks>
     <AllowUnsafeBlocks Condition="$(CsWinRTEnabled)">true</AllowUnsafeBlocks>
     <CoreCompileDependsOn>CsWinRTIncludeProjection;CsWinRTRemoveWinMDReferences;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+    <TrackFileAccess Condition="'$(CsWinRTComponent)' != 'true'">false</TrackFileAccess> 
     <!-- Make sure WinRT.Runtime.dll and Microsoft.Windows.SDK.NET.dll get binplaced with authored component's dll -->
     <CopyLocalLockFileAssemblies Condition="'$(CsWinRTComponent)' == 'true'">true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
@@ -26,23 +27,23 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
       <!-- dlls: Host.Shim, Runtime, NET.SDK  -->
       <_PackageFiles Include="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll;@(ReferenceCopyLocalPaths)">
-        <PackagePath>lib\net5</PackagePath>
+        <PackagePath>lib</PackagePath>
       </_PackageFiles>
 
       <!-- WinRT.Host.dll is architecture specific -->
-      <_PackageFiles Include="$(CsWinRTPath)native\x64\WinRT.Host.dll">
-        <PackagePath>lib\net5\native\x64</PackagePath>
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)native\x64\WinRT.Host.dll')" Include="$(CsWinRTPath)native\x64\WinRT.Host.dll">
+        <PackagePath>native\x64</PackagePath>
       </_PackageFiles>
-      <_PackageFiles Include="$(CsWinRTPath)native\x86\WinRT.Host.dll">
-        <PackagePath>lib\net5\native\x86</PackagePath>
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)native\x86\WinRT.Host.dll')" Include="$(CsWinRTPath)native\x86\WinRT.Host.dll">
+        <PackagePath>native\x86</PackagePath>
       </_PackageFiles>
 
-      <!-- Have to put it in both to remain compatible with packages.config -->
-      <_PackageFiles Include="$(CsWinRTPath)build\Microsoft.Windows.CsWinRT.Authoring.targets"> 
-        <PackagePath>buildTransitive</PackagePath>
+      <!-- Have to put Authoring.targets in both to remain compatible with packages.config -->
+      <_PackageFiles Include="$(CsWinRTPath)buildTransitive\Microsoft.Windows.CsWinRT.Authoring.targets"> 
+        <PackagePath>buildTransitive\CsWinRT.$(AssemblyName).targets</PackagePath>
       </_PackageFiles>
       <_PackageFiles Include="$(CsWinRTPath)build\Microsoft.Windows.CsWinRT.Authoring.targets"> 
-        <PackagePath>build</PackagePath>
+        <PackagePath>build\CsWinRT.$(AssemblyName).targets</PackagePath>
       </_PackageFiles>
     </ItemGroup>
   </Target>
@@ -140,6 +141,9 @@ $(CsWinRTFilters)
     <CompilerVisibleProperty Include="CsWinRTEnableLogging" />
     <CompilerVisibleProperty Include="GeneratedFilesDir" />
     <CompilerVisibleProperty Include="CsWinRTExe" />
+    <CompilerVisibleProperty Include="CsWinRTKeepGeneratedSources" />
+    <CompilerVisibleProperty Include="CsWinRTWindowsMetadata" />
+    <CompilerVisibleProperty Include="CsWinRTGenerateProjection" />
   </ItemGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets')"/>
