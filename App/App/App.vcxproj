@@ -127,19 +127,19 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Coords, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Coords.2.4.2\lib\net5.0-windows10.0.19041\Coords.dll</HintPath>
+      <HintPath>..\packages\Coords.2.4.7\lib\net5.0-windows10.0.19041\Coords.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Windows.SDK.NET, Version=10.0.19041.10, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\Coords.2.4.2\lib\Microsoft.Windows.SDK.NET.dll</HintPath>
+      <HintPath>..\packages\Coords.2.4.7\lib\Microsoft.Windows.SDK.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WinRT.Host.Shim, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Coords.2.4.2\lib\WinRT.Host.Shim.dll</HintPath>
+      <HintPath>..\packages\Coords.2.4.7\lib\WinRT.Host.Shim.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WinRT.Runtime, Version=1.0.1.33301, Culture=neutral, PublicKeyToken=99ea127f02d97709">
-      <HintPath>..\packages\Coords.2.4.2\lib\WinRT.Runtime.dll</HintPath>
+      <HintPath>..\packages\Coords.2.4.7\lib\WinRT.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

@@ -15,7 +15,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GeneratedFilesDir Condition="'$(GeneratedFilesDir)'==''">$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)', 'Generated Files'))</GeneratedFilesDir>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.4.2</Version>
+    <Version>2.4.7</Version>
     <PackageId>Coords</PackageId>
     <Authors>joshua</Authors>
     <Product>Coords</Product>

@@ -32,10 +32,10 @@ Copyright (C) Microsoft Corporation. All rights reserved.
 
       <!-- WinRT.Host.dll is architecture specific -->
       <_PackageFiles Condition="Exists('$(CsWinRTPath)native\x64\WinRT.Host.dll')" Include="$(CsWinRTPath)native\x64\WinRT.Host.dll">
-        <PackagePath>native\x64</PackagePath>
+        <PackagePath>runtimes\win-x64\native</PackagePath>
       </_PackageFiles>
       <_PackageFiles Condition="Exists('$(CsWinRTPath)native\x86\WinRT.Host.dll')" Include="$(CsWinRTPath)native\x86\WinRT.Host.dll">
-        <PackagePath>native\x86</PackagePath>
+        <PackagePath>runtimes\win-x86\native</PackagePath>
       </_PackageFiles>
 
       <!-- Have to put Authoring.targets in both to remain compatible with packages.config -->
