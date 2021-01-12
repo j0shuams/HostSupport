@@ -126,26 +126,15 @@
     </Manifest>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Coords, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Coords.2.4.7\lib\net5.0-windows10.0.19041\Coords.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Windows.SDK.NET, Version=10.0.19041.10, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <HintPath>..\packages\Coords.2.4.7\lib\Microsoft.Windows.SDK.NET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WinRT.Host.Shim, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Coords.2.4.7\lib\WinRT.Host.Shim.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WinRT.Runtime, Version=1.0.1.33301, Culture=neutral, PublicKeyToken=99ea127f02d97709">
-      <HintPath>..\packages\Coords.2.4.7\lib\WinRT.Runtime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Coords">
+      <HintPath>..\..\Coords\Coords\Generated Files\Coords.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Coords.2.9.1\build\Coords.targets" Condition="Exists('..\packages\Coords.2.9.1\build\Coords.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -153,5 +142,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Coords.2.9.1\build\Coords.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Coords.2.9.1\build\Coords.targets'))" />
   </Target>
 </Project>

@@ -1,0 +1,12 @@
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.csprojAssemblyReference.cache
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.GeneratedMSBuildEditorConfig.editorconfig
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.AssemblyInfoInputs.cache
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.AssemblyInfo.cs
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.csproj.CoreCompileInputs.cache
+C:\gh\HostSupport\Demo\Demo\bin\x64\Debug\net5.0-windows10.0.19041.0\Demo.deps.json
+C:\gh\HostSupport\Demo\Demo\bin\x64\Debug\net5.0-windows10.0.19041.0\Demo.dll
+C:\gh\HostSupport\Demo\Demo\bin\x64\Debug\net5.0-windows10.0.19041.0\ref\Demo.dll
+C:\gh\HostSupport\Demo\Demo\bin\x64\Debug\net5.0-windows10.0.19041.0\Demo.pdb
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.dll
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\ref\Demo.dll
+C:\gh\HostSupport\Demo\Demo\obj\x64\Debug\net5.0-windows10.0.19041.0\Demo.pdb
