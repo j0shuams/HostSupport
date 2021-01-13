@@ -1,21 +1,45 @@
 <Project ToolsVersion="15.0" xmln="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="CsWinRTCopyAuthoringDlls" AfterTargets="ResolveAssemblyReference" Outputs="@(Reference)">
-    <ItemGroup>
-    <!-- WinRT.Runtime.dll -->
-    <Reference Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Runtime.dll" />
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Runtime.dll" />
+
+  <PropertyGroup>
+    <ResolveReferencesDependsOn>$(ResolveReferencesDependsOn);CsWinRTCopyAuthoringDlls</ResolveReferencesDependsOn>
+    <!-- is the consuming project a native (C++) app -->
+    <HostingSupport-IsNative Condition="'$(TargetFramework)' == 'native' OR '$(TargetFramework)' == ''">true</HostingSupport-IsNative>
+    <HostingSupport-IsArmArch Condition="'$(Platform)' == 'arm' OR '$(Platform)' == 'arm64'">true</HostingSupport-IsNative>
+  </PropertyGroup>
+
+  <Target Name="CsWinRTCopyAuthoringDlls" Outputs="@(ReferenceCopyLocalPaths)">
+
+    <!-- Copy the necessary managed dlls -->
     
-    <!-- WinRT.Host.Shim.dll -->
-    <Reference Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Host.Shim.dll" />
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\lib\WinRT.Host.Shim.dll" />
-    
-    <!-- Microsoft.Windows.SDK.NET.dll -->
-    <Reference Include="$(MSBuildThisFileDirectory)..\lib\Microsoft.Windows.SDK.NET.dll" />
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\lib\Microsoft.Windows.SDK.NET.dll" />
-    
-    <!-- WinRT.Host.dll - arch specific! -->
-    <Reference Include="$(MSBuildThisFileDirectory)..\runtimes\win-$(Platform)\native\WinRT.Host.dll" />
-    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\runtimes\win-$(Platform)\native\WinRT.Host.dll" />
+    <!-- commented out to see if lib/native automatically gets copied by consuming native apps -->
+    <ItemGroup Label="For native apps: Copy Runtime, Host.Shim, SDK.NET, and AuthoredComponent dlls"
+              Condition="$(HostingSupport-IsNative)">
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\lib\native\*"/>
     </ItemGroup>
+      
+
+    <ItemGroup Label="For managed apps: Copy Runtime, Host.Shim, SDK.NET, and AuthoredComponent dlls"
+               Condition="'$(TargetFramework)' == 'net5*'">
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\lib\$(TargetFramework)\*"/>
+    </ItemGroup>
+  
+    <!-- Copy the architecture specific WinRT.Host.dll -->
+   
+    <ItemGroup Label="Copy (x64/x86) WinRT.Host.dll  to output"
+               Condition="'$(Platform)' == 'x64' OR '$(Platform)' == 'x86'">
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\runtimes\win-$(Platform)\native\WinRT.Host.dll"/>
+    </ItemGroup>
+ 
+    <ItemGroup Label="Copy Win32 WinRT.Host.dll to output"
+               Condition="'$(Platform)' == 'Win32'">
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\WinRT.Host.dll" /> 
+    </ItemGroup>
+
+    <ItemGroup Label="Copy arm/arm64 WinRT.Host.dll to output"
+               Condition="$(HostingSupport-IsArmArch)">
+      <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\runtimes\$(Platform)\native\WinRT.Host.dll" /> 
+    </ItemGroup>
+  
   </Target>
+
 </Project>

@@ -1,0 +1,5 @@
+c:\gh\HostSupport\Demo\Demo\obj\Debug\net5.0-windows10.0.19041.0\Demo.csprojAssemblyReference.cache
+c:\gh\HostSupport\Demo\Demo\obj\Debug\net5.0-windows10.0.19041.0\Demo.GeneratedMSBuildEditorConfig.editorconfig
+c:\gh\HostSupport\Demo\Demo\obj\Debug\net5.0-windows10.0.19041.0\Demo.AssemblyInfoInputs.cache
+c:\gh\HostSupport\Demo\Demo\obj\Debug\net5.0-windows10.0.19041.0\Demo.AssemblyInfo.cs
+c:\gh\HostSupport\Demo\Demo\obj\Debug\net5.0-windows10.0.19041.0\Demo.csproj.CoreCompileInputs.cache

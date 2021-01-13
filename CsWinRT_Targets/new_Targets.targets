@@ -1,0 +1,32 @@
+
+   <!-- For every PackageReference with Pack=true, we include the assemblies from it in the package -->
+  <Target Name="CsWinRTAddPackDependencies" 
+          Condition="'$(CsWinRTComponent)' == 'true'"
+          Inputs="@(RuntimeCopyLocalItems)" 
+          Outputs="@(RuntimeCopyLocalItems)" 
+          DependsOnTargets="ResolvePackageAssets"
+          BeforeTargets="GenerateNuspec"
+          AfterTargets="ResolvePackageAssets">
+    <ItemGroup>
+      <RuntimeCopyLocalItems Include="@(RuntimeCopyLocalItems);@(ReferenceCopyLocalPaths)"/>
+      <_PackageFiles Include="@(RuntimeCopyLocalItems)" PackagePath="$(BuildOutputTargetFolder)/$(TargetFramework)/%(Filename)%(Extension)" />
+      <_PackageFiles Include="@(RuntimeCopyLocalItems)" PackagePath="$(BuildOutputTargetFolder)/native/%(Filename)%(Extension)" />
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll')" 
+                     Include="$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll" 
+                     PackagePath="$(BuildOutputTargetFolder)/native/win-x64/WinRT.Host"
+                     CopyLocal="true" />
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll')" 
+                     Include="$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll" 
+                     PackagePath="$(BuildOutputTargetFolder)/native/win-x86/WinRT.Host.dll" />
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\arm\native\WinRT.Host.dll')" 
+                     Include="$(CsWinRTPath)runtimes\arm\native\WinRT.Host.dll" 
+                     PackagePath="$(BuildOutputTargetFolder)/native/arm/%(Filename)%(Extension)" />
+      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\arm64\native\WinRT.Host.dll')" 
+                     Include="$(CsWinRTPath)runtimes\arm64\native\WinRT.Host.dll" 
+                     PackagePath="$(BuildOutputTargetFolder)/native/arm64/WinRT.Host.dll" 
+                     CopyLocal="true"/>
+      <RuntimeCopyLocalItems Update="@(RuntimeCopyLocalItems)" CopyLocal="true" Private="true" />
+      <ResolvedFileToPublish Include="@(RuntimeCopyLocalItems)" CopyToPublishDirectory="PreserveNewest" RelativePath="%(Filename)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
