@@ -1,5 +1,6 @@
 # HostSupport
 A C# library used in a C++ app, using WinRT. Experiment with targets files and nuget packaging.
+The Coords library is built and packed, and then consumed by App as a nuget package. App uses the library to do a calculation, showing the usage of C# from C++ via WinRT.
 
 ## Workflow:
  * Make an edit in a targets file in CsWinRT_Targets
