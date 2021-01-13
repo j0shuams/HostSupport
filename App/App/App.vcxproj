@@ -125,16 +125,10 @@
       <DeploymentContent>true</DeploymentContent>
     </Manifest>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Coords">
-      <HintPath>..\..\Coords\Coords\Generated Files\Coords.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Coords.2.9.1\build\Coords.targets" Condition="Exists('..\packages\Coords.2.9.1\build\Coords.targets')" />
+    <Import Project="..\packages\Coords.3.0.0\build\Coords.targets" Condition="Exists('..\packages\Coords.3.0.0\build\Coords.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -142,6 +136,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201217.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Coords.2.9.1\build\Coords.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Coords.2.9.1\build\Coords.targets'))" />
+    <Error Condition="!Exists('..\packages\Coords.3.0.0\build\Coords.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Coords.3.0.0\build\Coords.targets'))" />
   </Target>
 </Project>

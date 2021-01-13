@@ -15,11 +15,15 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GeneratedFilesDir Condition="'$(GeneratedFilesDir)'==''">$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)', 'Generated Files'))</GeneratedFilesDir>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.9.1</Version>
+    <Version>3.0.4</Version>
     <PackageId>Coords</PackageId>
     <Authors>joshua</Authors>
     <Product>Coords</Product>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <_PackageFiles Include="Coords.targets" PackagePath="build;buildTransitive"/>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
@@ -30,6 +34,5 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.1.1-prerelease.210109.2" />
   </ItemGroup>
-
   
  </Project>

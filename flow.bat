@@ -6,7 +6,7 @@ echo ************************************
 set versionNum=%1
 
 :: Display the version we want to package
-echo * Okay, you want to make and use this package: Coords.2.9.%versionNum%.nupkg
+echo * Okay, you want to make and use this package: Coords.3.0.%versionNum%.nupkg
 echo ------------------------------------
 
 :: msbuild Coords.csproj
@@ -18,7 +18,7 @@ echo ------------------------------------
 
 :: Add coords nupkg to feed
 echo * Adding the generated package to our local nuget feed
-start /wait "'upload' coords library" cmd /c nuget add Coords\Coords\bin\x64\debug\Coords.2.9.%versionNum%.nupkg -Source feed
+start /wait "'upload' coords library" cmd /c nuget add Coords\Coords\bin\x64\debug\Coords.3.0.%versionNum%.nupkg -Source feed
 if %ERRORLEVEL% GEQ 1 ECHO ** Error uploading package! Did you make sure the version number in Coords.csproj matches the one you input here?
 if %ERRORLEVEL% GEQ 1 EXIT /b 2
 echo ------------------------------------
