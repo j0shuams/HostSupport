@@ -2,7 +2,8 @@
 
 namespace Demo
 {
-    public sealed class Coord
+    // error - classes must be sealed -- good example of future CodeFix 
+    public class Coord
     {
         public long X;
         public long Y;
@@ -18,6 +19,22 @@ namespace Demo
             X = x;
             Y = y;
         }
+
+        // error - multiple constructors of arity 2
+        public Coord(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        // error - operator overloading not allowed in Windows Runtime
+        public static Coord operator ++(Coord xypair)
+        {
+            ++xypair.X;
+            ++xypair.Y;
+            return xypair;
+        }
+
 
         public double Distance(Coord target)
         {
