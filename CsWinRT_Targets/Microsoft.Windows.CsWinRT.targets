@@ -21,69 +21,22 @@ Copyright (C) Microsoft Corporation. All rights reserved.
     <CopyLocalLockFileAssemblies Condition="'$(CsWinRTComponent)' == 'true'">true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
- <!-- When an authored component packs, add the necessary dlls to the package, 
-       along with a targets file to distribute (binplace) them in any consuming package -->
-  <Target Name="CsWinRTIncludeHostDlls"  
-          Condition="'$(CsWinRTComponent)' == 'true'" 
-          BeforeTargets="GenerateNuspec" 
-          Outputs="@(_PackageFiles)">
-
-    <ItemGroup>
-
-      <_PackageFiles Include="$(GeneratedFilesDir)$(AssemblyName).winmd"
-                     PackagePath="lib\$(TargetFramework)"/>
-
-      <_PackageFiles Include="$(GeneratedFilesDir)$(AssemblyName).winmd"
-                     PackagePath="lib\native"/>
-      
-      <!-- The authored component gets the WinRT.Runtime and NET.SDK dlls from ReferenceCopyLocalPaths 
-            when CopyLocalLockFileAssemblies is enabled -->
-      <_PackageFiles Include="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll;@(ReferenceCopyLocalPaths);$(TargetPath)"
-                     PackagePath="lib\$(TargetFramework)"/>
-
-      <!-- A native (C++) project will reject installing the authored component's nupkg 
-            if it does not have files for the "target framework" ("native") -->
-      <_PackageFiles Include="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll;@(ReferenceCopyLocalPaths);$(TargetPath)"
-                     PackagePath="lib\native"/>
-
-      <!-- Custom targets that copy dlls for consumers of the authored component
-            if consumer uses PackageReference => buildTransitive directory is used 
-                          if packages.config => build directory is used -->
-      <_PackageFiles Include="$(CsWinRTPath)buildTransitive\Microsoft.Windows.CsWinRT.Authoring.targets"
-                     PackagePath="buildTransitive\$(AssemblyName).CsWinRT.targets;build\$(AssemblyName).CsWinRT.targets"/>
-      <!--                        PackageReference => buildTransitive             packages.config => build directory --> 
-
-
-      <!-- WinRT.Host.dll is architecture specific -->
-      <!-- x64 --> 
-      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll')" 
-                     Include="$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll"
-                     PackagePath="runtimes\win-x64\native"/>
-      <!-- x86 --> 
-      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll')" 
-                     Include="$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll"
-                     PackagePath="runtimes\win-x86\native"/>
-      <!-- arm --> 
-      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\arm\native\WinRT.Host.dll')" 
-                     Include="$(CsWinRTPath)runtimes\arm\native\WinRT.Host.dll"
-                     PackagePath="runtimes\arm\native"/>
-      <!-- arm64 --> 
-      <_PackageFiles Condition="Exists('$(CsWinRTPath)runtimes\arm64\native\WinRT.Host.dll')" 
-                     Include="$(CsWinRTPath)runtimes\arm64\native\WinRT.Host.dll"
-                     PackagePath="runtimes\arm64\native"/>
-   </ItemGroup>
-  </Target>
-
-
   <!-- Remove WinRT.Host.dll and WinRT.Host.Shim.dll references -->
-  <Target Name="CsWinRTRemoveHostingDllReferences" AfterTargets="ResolvePackageAssets" BeforeTargets="ResolveLockFileAnalyzers" Outputs="@(Reference)">
+  <Target Name="CsWinRTRemoveHostingDllReferences" 
+          AfterTargets="ResolvePackageAssets" 
+          BeforeTargets="ResolveLockFileAnalyzers" 
+          Outputs="@(Reference)">
+    <PropertyGroup>
+      <CsWinRTPkg-Net5Dir>$(CsWinRTPath)lib\net5.0</CsWinRTPkg-Net5Dir>
+      <CsWinRTPkg-NativeDir>$(CsWinRTPath)runtimes\**\native</CsWinRTPkg-NativeDir>
+    </PropertyGroup>
     <ItemGroup>
-     <Reference                      Remove="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll"/>
-     <ReferenceCopyLocalPaths        Remove="$(CsWinRTPath)runtimes\**\native\WinRT.Host.dll"/>
-     <ResolvedCompileFileDefinitions Remove="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll"/>
-     <RuntimeCopyLocalItems          Remove="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll"/>
-     <RuntimeCopyLocalItems          Remove="$(CsWinRTPath)runtimes\**\native\WinRT.Host.dll"/>
-     <RuntimeTargetsCopyLocalItems   Remove="$(CsWinRTPath)runtimes\**\native\WinRT.Host.dll"/>
+     <ReferenceCopyLocalPaths        Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <RuntimeCopyLocalItems          Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <RuntimeTargetsCopyLocalItems   Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <Reference                      Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
+     <ResolvedCompileFileDefinitions Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
+     <RuntimeCopyLocalItems          Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
     </ItemGroup>
   </Target>
 
@@ -169,13 +122,21 @@ $(CsWinRTFilters)
     <CompilerVisibleProperty Include="AssemblyVersion" />
     <CompilerVisibleProperty Include="CsWinRTComponent" />
     <CompilerVisibleProperty Include="CsWinRTEnableLogging" />
-    <CompilerVisibleProperty Include="GeneratedFilesDir" />
+    <CompilerVisibleProperty Include="CsWinRTGeneratedFilesDir" />
     <CompilerVisibleProperty Include="CsWinRTExe" />
     <CompilerVisibleProperty Include="CsWinRTKeepGeneratedSources" />
     <CompilerVisibleProperty Include="CsWinRTWindowsMetadata" />
     <CompilerVisibleProperty Include="CsWinRTGenerateProjection" />
+    <CompilerVisibleProperty Include="CsWinRTAuthoringInputs" />
   </ItemGroup>
 
+  <!-- Note this runs before the msbuild editor config file is generated because that is what is used to pass properties to the source generator. -->
+  <Target Name="CsWinRTSetAuthoringWinMDs" BeforeTargets="GenerateMSBuildEditorConfigFile;GenerateMSBuildEditorConfigFileCore" DependsOnTargets="CsWinRTRemoveWinMDReferences;GetAssemblyVersion;CsWinRTPrepareProjection" Condition="$(CsWinRTEnabled) And '$(CsWinRTComponent)' == 'true'">
+    <PropertyGroup>
+      <CsWinRTAuthoringInputs>$(CsWinRTAuthoringInputs) @(CsWinRTInputs->'"%(FullPath)"', ' ') @(CsWinRTAuthoringWinMDs->'"%(FullPath)"', ' ')</CsWinRTAuthoringInputs>
+    </PropertyGroup>
+  </Target>
+  
   <Import Project="$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets')"/>
-
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Authoring.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Authoring.targets')"/>
 </Project>

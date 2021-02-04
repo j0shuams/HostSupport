@@ -1,0 +1,195 @@
+<!--
+***********************************************************************************************
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CsWinRTMessageImportance Condition="'$(CsWinRTMessageImportance)' == ''">normal</CsWinRTMessageImportance>
+    <CsWinRTCommandVerbosity Condition="'$(CsWinRTMessageImportance)' == 'high'">-verbose</CsWinRTCommandVerbosity>
+    <ResolveAssemblyReferencesDependsOn Condition="'$(CsWinRTRemoveWindowsReference)'!='false'">$(ResolveAssemblyReferencesDependsOn);CsWinRTRemoveWindowsReference</ResolveAssemblyReferencesDependsOn>
+    <CsWinRTEnabled Condition="'$(CsWinRTEnabled)' == ''">true</CsWinRTEnabled>
+    <CsWinRTEnabled Condition="'$(CsWinRTEnabled)' != 'true'">false</CsWinRTEnabled>
+    <CsWinRTGenerateProjection Condition="!$(CsWinRTEnabled)">false</CsWinRTGenerateProjection>
+    <CsWinRTGenerateProjection Condition="'$(CsWinRTGenerateProjection)' == ''">true</CsWinRTGenerateProjection>
+    <AllowUnsafeBlocks Condition="'$(CsWinRTComponent)' == 'true'">true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks Condition="$(CsWinRTEnabled)">true</AllowUnsafeBlocks>
+    <CoreCompileDependsOn>CsWinRTIncludeProjection;CsWinRTRemoveWinMDReferences;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+    <TrackFileAccess Condition="'$(CsWinRTComponent)' != 'true'">false</TrackFileAccess> 
+    <!-- Make sure WinRT.Runtime.dll and Microsoft.Windows.SDK.NET.dll get binplaced with authored component's dll -->
+    <CopyLocalLockFileAssemblies Condition="'$(CsWinRTComponent)' == 'true'">true</CopyLocalLockFileAssemblies>
+    <!-- <PackDependsOn>CsWinRTIncludeHostDlls;$(PackDependsOn)</PackDependsOn> -->
+  </PropertyGroup>
+
+ <!-- Remove WinRT.Host.dll and WinRT.Host.Shim.dll references -->
+  <Target Name="CsWinRTRemoveHostingDllReferences" 
+          AfterTargets="ResolvePackageAssets" 
+          BeforeTargets="ResolveLockFileAnalyzers" 
+          Outputs="@(Reference)">
+    <PropertyGroup>
+      <CsWinRTPkg-Net5Dir>$(CsWinRTPath)lib\net5.0</CsWinRTPkg-Net5Dir>
+      <CsWinRTPkg-NativeDir>$(CsWinRTPath)runtimes\**\native</CsWinRTPkg-NativeDir>
+    </PropertyGroup>
+    <ItemGroup>
+     <ReferenceCopyLocalPaths        Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <RuntimeCopyLocalItems          Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <RuntimeTargetsCopyLocalItems   Remove="$(CsWinRTPkg-NativeDir)\WinRT.Host.dll"/>
+     <Reference                      Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
+     <ResolvedCompileFileDefinitions Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
+     <RuntimeCopyLocalItems          Remove="$(CsWinRTPkg-Net5Dir)\WinRT.Host.Shim.dll"/>
+    </ItemGroup>
+  </Target>
+
+  <!-- Remove Windows.Winmd reference to prevent compile collisions-->
+  <Target Name="CsWinRTRemoveWindowsReference" Outputs="@(Reference)" Condition="$(CsWinRTEnabled)">
+   <ItemGroup>
+     <Reference Remove="Windows"/>
+   </ItemGroup>
+  </Target>
+
+  <Target Name="CsWinRTRemoveWinMDReferences" BeforeTargets="BeforeCompile" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <!--Move winmd references into private item group to prevent subsequent winmd reference errors-->
+      <CsWinRTRemovedReferences Include="@(ReferencePath)" Condition="'%(ReferencePath.Extension)' == '.winmd'" />
+      <CsWinRTInputs Include="@(CsWinRTRemovedReferences)"/>
+
+      <!--Prevent NETSDK1130 errors from winmd references-->
+      <ReferencePath Remove="@(ReferencePath)" Condition="'%(ReferencePath.Extension)' == '.winmd'" />
+      <ReferencePathWithRefAssemblies Remove="@(CsWinRTRemovedReferences)" 
+        Condition="'%(CsWinRTRemovedReferences.Filename)%(CsWinRTRemovedReferences.Extension)' == '%(ReferencePathWithRefAssemblies.Filename)%(ReferencePathWithRefAssemblies.Extension)'" />
+      <!--Do not publish projection source winmds -->
+      <ReferenceCopyLocalPaths Remove="@(CsWinRTRemovedReferences)" />
+      <!--Remove winmd references from deps.json to prevent CLR failing unit test execution-->
+      <ReferenceDependencyPaths Remove="@(ReferenceDependencyPaths)" Condition="%(ReferenceDependencyPaths.Extension) == '.winmd'"/>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CsWinRTPrepareProjection" DependsOnTargets="$(CsWinRTPrepareProjectionDependsOn)" Outputs="$(CsWinRTGeneratedFilesDir)">
+    <PropertyGroup>
+      <CsWinRTGeneratedFilesDir Condition="'$(CsWinRTGeneratedFilesDir)' == ''">$(GeneratedFilesDir)</CsWinRTGeneratedFilesDir>
+      <CsWinRTGeneratedFilesDir Condition="'$(CsWinRTGeneratedFilesDir)' == ''">$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(IntermediateOutputPath)', 'Generated Files'))</CsWinRTGeneratedFilesDir>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CsWinRTGenerateProjection" DependsOnTargets="CsWinRTPrepareProjection;CsWinRTRemoveWinMDReferences" Condition="'$(CsWinRTGenerateProjection)' == 'true'">
+    <PropertyGroup>
+      <CsWinRTResponseFile>$(CsWinRTGeneratedFilesDir)cswinrt.rsp</CsWinRTResponseFile>
+	  <CsWinRTCommand>"$(CsWinRTExe)" %40"$(CsWinRTResponseFile)"</CsWinRTCommand>
+      <CsWinRTWindowsMetadata Condition="'$(CsWinRTWindowsMetadata)' == ''">$(WindowsSDKVersion.TrimEnd('\'))</CsWinRTWindowsMetadata>
+      <CsWinRTWindowsMetadataInput Condition="'$(CsWinRTWindowsMetadata)' != ''">-input $(CsWinRTWindowsMetadata)</CsWinRTWindowsMetadataInput>
+    </PropertyGroup>
+    <ItemGroup>
+      <CsWinRTDetectWindowsMetadata Include="@(CsWinRTInputs)" Condition="'%(CsWinRTInputs.Filename)%(CsWinRTInputs.Extension)' == 'Windows.Foundation.FoundationContract.winmd'"></CsWinRTDetectWindowsMetadata>
+      <CsWinRTDetectWindowsMetadata Include="@(CsWinRTInputs)" Condition="'%(CsWinRTInputs.Filename)%(CsWinRTInputs.Extension)' == 'Windows.winmd'"></CsWinRTDetectWindowsMetadata>
+    </ItemGroup>
+    <Error Condition="'$(CsWinRTParams)$(CsWinRTFilters)$(CsWinRTWindowsMetadata)@(CsWinRTDetectWindowsMetadata)' == ''"
+      Text="Windows Metadata not provided or detected.  See https://github.com/microsoft/CsWinRT/tree/master/nuget/readme.md" />
+    <PropertyGroup>
+      <CsWinRTExcludes Condition="'$(CsWinRTExcludes)' == ''">Windows;Microsoft</CsWinRTExcludes>
+    </PropertyGroup>
+    <ItemGroup>
+      <CsWinRTExcludeItems Include="$(CsWinRTExcludes)"/>
+      <CsWinRTIncludeItems Include="$(CsWinRTIncludes)"/>
+    </ItemGroup>
+    <PropertyGroup>
+      <CsWinRTFilters Condition="'$(CsWinRTFilters)' == ''">
+@(CsWinRTExcludeItems->'-exclude %(Identity)', '&#x0d;&#x0a;')
+@(CsWinRTIncludeItems->'-include %(Identity)', '&#x0d;&#x0a;')
+      </CsWinRTFilters> 
+      <CsWinRTParams Condition="'$(CsWinRTParams)' == ''">
+$(CsWinRTCommandVerbosity)
+-target $(TargetFramework)
+$(CsWinRTWindowsMetadataInput)
+-input @(CsWinRTInputs->'"%(FullPath)"', ' ')
+-output "$(CsWinRTGeneratedFilesDir.TrimEnd('\'))"
+$(CsWinRTFilters)
+      </CsWinRTParams>
+    </PropertyGroup>
+    <MakeDir Directories="$(CsWinRTGeneratedFilesDir)" />
+    <WriteLinesToFile File="$(CsWinRTResponseFile)" Lines="$(CsWinRTParams)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <Message Text="$(CsWinRTCommand)" Importance="$(CsWinRTMessageImportance)" />
+    <Exec Command="$(CsWinRTCommand)" />
+  </Target>
+  
+  <Target Name="CsWinRTIncludeProjection" BeforeTargets="BeforeCompile" DependsOnTargets="CsWinRTGenerateProjection" Condition="$(CsWinRTEnabled)">
+    <ItemGroup>
+      <Compile Include="$(CsWinRTGeneratedFilesDir)*.cs" Exclude="@(Compile)" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup Condition="'$(CsWinRTComponent)' == 'true'">
+    <CompilerVisibleProperty Include="AssemblyName" />
+    <CompilerVisibleProperty Include="AssemblyVersion" />
+    <CompilerVisibleProperty Include="CsWinRTComponent" />
+    <CompilerVisibleProperty Include="CsWinRTEnableLogging" />
+    <CompilerVisibleProperty Include="GeneratedFilesDir" />
+    <CompilerVisibleProperty Include="CsWinRTExe" />
+    <CompilerVisibleProperty Include="CsWinRTKeepGeneratedSources" />
+    <CompilerVisibleProperty Include="CsWinRTWindowsMetadata" />
+    <CompilerVisibleProperty Include="CsWinRTGenerateProjection" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets" Condition="Exists('$(MSBuildThisFileDirectory)Microsoft.Windows.CsWinRT.Prerelease.targets')"/>
+
+  <!-- Copy Authored winmd to output folder -->
+  <Target Name="CsWinRTPlaceWinMDInOutputFolder"
+          Condition="'$(CsWinRTComponent)' == 'true'" 
+          BeforeTargets="AfterBuild">
+    <!-- When we need to include hosting assets, make sure the winmd is in the output dir -->
+    <Copy SourceFiles="Generated Files\$(AssemblyName).winmd"
+          DestinationFolder="$(TargetDir)"
+          UseHardlinksIfPossible="false"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- When an authored component makes a nupkg, add the necessary hosting assets to the package -->
+  <Target Name="CsWinRTIncludeHostDlls"  
+          Condition="'$(CsWinRTComponent)' == 'true'" 
+          BeforeTargets="AfterBuild"
+          Outputs="@(Content)">
+    <ItemGroup>
+      <Content Include="$(TargetDir)$(AssemblyName).winmd"
+               Pack="true"
+               PackagePath="winmd" />
+      
+      <!-- The authored component gets the WinRT.Runtime and NET.SDK dlls from ReferenceCopyLocalPaths 
+            (because CopyLocalLockFileAssemblies == true) and $(TargetPath) has the assembly (e.g. PackageId.dll) -->
+      <Content Include="$(CsWinRTPath)lib\net5.0\WinRT.Host.Shim.dll;@(ReferenceCopyLocalPaths);$(TargetPath)"
+               Pack="true"
+               PackagePath="native" />
+
+      <!-- Custom targets that copy dlls for consumers of the authored component.
+           `buildTransitive\` is for PackageReference, `build\` is for packages.config -->
+      <Content Include="$(CsWinRTPath)buildTransitive\Microsoft.Windows.CsWinRT.Authoring.targets"
+               Pack="true"
+               PackagePath="buildTransitive\$(AssemblyName).targets;build\$(AssemblyName).targets"/>
+
+      <!-- WinRT.Host.dll is architecture specific -->
+      <!-- x64 --> 
+      <Content Condition="Exists('$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll')" 
+               Include="$(CsWinRTPath)runtimes\win-x64\native\WinRT.Host.dll"
+               Pack="true"
+               PackagePath="runtimes\win-x64\native"/>
+      <!-- x86 --> 
+      <Content Condition="Exists('$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll')" 
+               Include="$(CsWinRTPath)runtimes\win-x86\native\WinRT.Host.dll"
+               Pack="true"
+               PackageCopyToOutput="true"
+               PackagePath="runtimes\win-x86\native"/>
+      <!-- arm --> 
+      <Content Condition="Exists('$(CsWinRTPath)runtimes\win-arm\native\WinRT.Host.dll')" 
+               Include="$(CsWinRTPath)runtimes\win-arm\native\WinRT.Host.dll"
+               Pack="true"
+               PackageCopyToOutput="true"
+               PackagePath="runtimes\win-arm\native"/>
+      <!-- arm64 --> 
+      <Content Condition="Exists('$(CsWinRTPath)runtimes\win-arm64\native\WinRT.Host.dll')" 
+               Include="$(CsWinRTPath)runtimes\win-arm64\native\WinRT.Host.dll"
+               Pack="true"
+               PackageCopyToOutput="true"
+               PackagePath="runtimes\win-arm64\native"/>
+   </ItemGroup>
+  </Target>
+
+</Project>
